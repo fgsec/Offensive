@@ -39,8 +39,8 @@ def getSSHShadow(server_address,server_username,server_pass):
 		port = 0
 		if isSSHOpen(server_address,22):
 			port = 22
-		elif isSSHOpen(server_address,4098):
-			port = 4098
+		elif isSSHOpen(server_address,2222):
+			port = 2222
 
 		logging.info('[%s] [%s:%s] - Trying SSH to %d' % (server_address,server_username,server_pass,port))
 		ssh.connect(hostname=server_address,

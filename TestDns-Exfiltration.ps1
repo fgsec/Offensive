@@ -1,3 +1,5 @@
+# On your DNS server you may use tcpdump to get the results (tcpdump -n port 53)
+
 function TestDns-Exfiltration {
 
     param(

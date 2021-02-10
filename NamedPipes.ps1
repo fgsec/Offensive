@@ -16,8 +16,6 @@ $server = {
 }
 Invoke-Command $server -ArgumentList "PIPENAME"
 
-
-
 # CLIENT.ps1 
 
 $client = { 

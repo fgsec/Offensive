@@ -36,7 +36,7 @@ if(Java.available){
 		 Java.perform(function () {
 			 var IM = Java.use("CLASS");
 			 IM.FUNCTION.overload().implementation = function () {
-			 send("Inside - function getNumEstabelecimento()");
+			 send("Inside - function()");
 			 var ret = this.getNumEstabelecimento();
 			 send("Result:" + ret);
 			 return ret;

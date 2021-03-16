@@ -19,7 +19,7 @@ $ frida -U Gadget -l .\frida\script.js --no-pause
 
 ### ADB Forward connection
 
-Had some trouble connection at the frida server and this solved my issue. If you are running things with root probably won't need this.
+Had some trouble connecting at the frida server and this solved my issue. If you are running things with root probably won't need this.
 
 ```bash
 $ adb forward tcp:27042 tcp:27042

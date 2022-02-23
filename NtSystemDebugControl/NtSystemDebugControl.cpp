@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Windows.h>#include <Ntdef.h>
+#include <Windows.h>
 #include "Header.h"
 
 static NtSystemDebugControl g_NtSystemDebugControl = NULL;
